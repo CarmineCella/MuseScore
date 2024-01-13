@@ -40,6 +40,8 @@
 
 #include "log.h"
 
+#include <iostream>
+
 using namespace mu;
 using namespace mu::project;
 using namespace mu::notation;
@@ -159,7 +161,10 @@ bool ProjectActionsController::isFileSupported(const io::path_t& path) const
     if (readers()->reader(suffix)) {
         return true;
     }
-
+    if (suffix == "wav") {
+        std::cout << "WAV dragging" << std::endl;
+        return true;
+    }
     return false;
 }
 

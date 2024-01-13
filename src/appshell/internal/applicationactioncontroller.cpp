@@ -34,6 +34,8 @@
 #include "translation.h"
 #include "log.h"
 
+#include <iostream>
+
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
@@ -95,17 +97,13 @@ void ApplicationActionController::onDropEvent(QDropEvent* event)
         LOGD() << url;
 
         bool shouldBeHandled = false;
-
-        if (projectFilesController()->isUrlSupported(url)) {
-            async::Async::call(this, [this, url]() {
-                Ret ret = projectFilesController()->openProject(url);
-                if (!ret) {
-                    LOGE() << ret.toString();
-                }
-            });
-            shouldBeHandled = true;
-        } else if (url.isLocalFile()) {
+        if (url.isLocalFile()) {
             io::path_t filePath { url };
+            std::cout << "--------------------------------- dropped " << filePath.c_str () << std::endl;
+
+        interactive()->info(std::string("Orchidea"),
+                            std::string ("Orchestration completed"),
+                            {}, 0, IInteractive::Option::WithIcon);
 
             if (audio::synth::isSoundFont(filePath)) {
                 async::Async::call(this, [this, filePath]() {
@@ -116,6 +114,16 @@ void ApplicationActionController::onDropEvent(QDropEvent* event)
                 });
                 shouldBeHandled = true;
             }
+
+
+        } else if (projectFilesController()->isUrlSupported(url)) {
+            async::Async::call(this, [this, url]() {
+                Ret ret = projectFilesController()->openProject(url);
+                if (!ret) {
+                    LOGE() << ret.toString();
+                }
+            });
+            shouldBeHandled = true;
         }
 
         if (shouldBeHandled) {
@@ -204,7 +212,7 @@ void ApplicationActionController::restart()
 
 void ApplicationActionController::toggleFullScreen()
 {
-    mainWindow()->toggleFullScreen();
+    mainWindow()->toggleFullScreen();   
 }
 
 void ApplicationActionController::openAboutDialog()
@@ -240,7 +248,6 @@ void ApplicationActionController::openPreferencesDialog()
         multiInstancesProvider()->activateWindowWithOpenedPreferences();
         return;
     }
-
     interactive()->open("musescore://preferences");
 }
 
