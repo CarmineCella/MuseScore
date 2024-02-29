@@ -34,11 +34,22 @@
 #include "translation.h"
 #include "log.h"
 
+#include <string>
 #include <iostream>
 
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
+
+std::string getFileExt(const std::string& s) {
+    size_t i = s.rfind('.', s.length());
+    if (i != std::string::npos) {
+        return(s.substr(i+1, s.length() - i));
+    }
+
+    return("");
+}
+
 
 void ApplicationActionController::preInit()
 {
@@ -99,12 +110,21 @@ void ApplicationActionController::onDropEvent(QDropEvent* event)
         bool shouldBeHandled = false;
         if (url.isLocalFile()) {
             io::path_t filePath { url };
-            std::cout << "--------------------------------- dropped " << filePath.c_str () << std::endl;
 
-        interactive()->info(std::string("Orchidea"),
-                            std::string ("Orchestration completed"),
-                            {}, 0, IInteractive::Option::WithIcon);
+            if (getFileExt (filePath.c_str ()) ==  (std::string) "txt") {
+                interactive()->info(std::string("Orchidea"),
+                    std::string ("Orchestration script loaded"),
+                    {}, 0, IInteractive::Option::WithIcon);
 
+            }
+
+            if (getFileExt (filePath.c_str ()) == (std::string) "wav") {
+                interactive()->info(std::string("Orchidea"),
+                    std::string ("Orchestration completed"),
+                    {}, 0, IInteractive::Option::WithIcon);
+
+            }
+            
             if (audio::synth::isSoundFont(filePath)) {
                 async::Async::call(this, [this, filePath]() {
                     Ret ret = soundFontRepository()->addSoundFont(filePath);
