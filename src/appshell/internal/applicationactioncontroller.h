@@ -41,6 +41,22 @@
 #include "istartupscenario.h"
 #include "iapplication.h"
 
+#include "../../orchidea/internal/dummyFile.h"   //this works
+
+#warning @carmine Including any of the following files leads to a linker error in src/appshell/libappshell.a[6](unity_0_cxx.cxx.o) and src/appshell/libappshell.a[6](unity_1_cxx.cxx.o)
+// #include "../../orchidea/internal/SoundTarget.h"
+// #include "../../orchidea/internal/Source.h"
+// #include "../../orchidea/internal/Parameters.h"
+// #include "../../orchidea/internal/GeneticOrchestra.h"
+// #include "../../orchidea/internal/Session.h"
+// #include "../../orchidea/internal/analysis.h"
+// #include "../../orchidea/internal/utilities.h"
+// #include "../../orchidea/internal/constants.h"            
+// #include "../../orchidea/internal/segmentations.h"
+// #include "../../orchidea/internal/OrchestrationModel.h"
+// #include "../../orchidea/internal/ConnectionModel.h"
+// #include "../../orchidea/internal/connections.h"
+
 namespace mu::appshell {
 class ApplicationActionController : public QObject, public IApplicationActionController, public actions::Actionable, public async::Asyncable
 {
@@ -88,6 +104,12 @@ private:
     bool m_quiting = false;
 
     async::Channel<actions::ActionCodeList> m_actionsReceiveAvailableChanged;
+    // Source<float>* source;
+    // Parameters<float> params;
+    // TargetI<float>* target;
+
+    
+
 };
 }
 

@@ -12,7 +12,10 @@ extern const double RMAX = 0x7fffffff;
 extern const double LARGE_VALUE = 1000000000;
 
 extern const double PI = 4. * atan ((double) 1.);
+#ifndef TWOPI
 extern const double TWOPI = 8. * atan ((double) 1.);
+#endif
+
 
 extern const double LOG2 = (double) log ((double) 2.);
 extern const double LOG2OF10 = 3.32192809488736234787;

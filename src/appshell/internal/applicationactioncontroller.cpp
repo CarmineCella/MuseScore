@@ -37,6 +37,8 @@
 #include <string>
 #include <iostream>
 
+
+
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
@@ -120,7 +122,7 @@ void ApplicationActionController::onDropEvent(QDropEvent* event)
 
             if (getFileExt (filePath.c_str ()) == (std::string) "wav") {
                 interactive()->info(std::string("Orchidea"),
-                    std::string ("Orchestration completed"),
+                    std::string ("Orchestration completed. \n You lucky dog..."),
                     {}, 0, IInteractive::Option::WithIcon);
 
             }
