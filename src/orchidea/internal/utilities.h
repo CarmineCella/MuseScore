@@ -468,8 +468,8 @@ long resample(std::vector<T>& inframes, std::vector<T>& outframes, double old_sr
             for (i = -window_width/2; i < window_width/2; i++) { // For 1 window width
                 j = (long)(x + i);          // Calc input sample index
                 //rem calculate von Hann Window. Scale and calculate Sinc
-                r_w     = 0.5 - 0.5 * cos(TWOPI*(0.5 + (j - x)/window_width));
-                r_a     = TWOPI*(j - x)*fmax/new_sr;
+                r_w     = 0.5 - 0.5 * cos(orchidea::TWOPI*(0.5 + (j - x)/window_width));
+                r_a     = orchidea::TWOPI*(j - x)*fmax/new_sr;
                 r_snc   = (r_a != 0 ? r_snc = sin(r_a)/r_a : 1);
                 if (j >= 0 && j < num_in_frames) {
                     r_y   = r_y + r_g * r_w * r_snc * inframes[num_channels * j + ch];
