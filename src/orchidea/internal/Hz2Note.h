@@ -34,8 +34,8 @@ public:
         oct = 4;
         if (freq < 1E-15) freq = 1E-15;
         lfreq = log (freq);
-        while (lfreq < m_lfreqs[0] - LOG_D_NOTE / 2.) lfreq += LOG2;
-        while (lfreq >= m_lfreqs[0] + LOG2 - LOG_D_NOTE / 2.) lfreq -= LOG2;
+        while (lfreq < m_lfreqs[0] - LOG_D_NOTE / 2.) lfreq += orchidea::LOG2;
+        while (lfreq >= m_lfreqs[0] + orchidea::LOG2 - LOG_D_NOTE / 2.) lfreq -= orchidea::LOG2;
         mldf = LOG_D_NOTE;
         for (int i = 0; i < 12; ++i) {
             ldf = fabs (lfreq - m_lfreqs[i]);
@@ -54,7 +54,7 @@ public:
             ++oct;
         }
     
-        cents =  1200 * (log (freq / nfreq) / LOG2);
+        cents =  1200 * (log (freq / nfreq) / orchidea::LOG2);
     }
             
 private:

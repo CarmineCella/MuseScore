@@ -311,7 +311,7 @@ void create_sound_mix (const std::vector<std::string>& files,
 		int channels = in.getNumChannels ();
 		int bits = in.getNumBits();
 
-		if (sr != DEFAULT_SR) {
+		if (sr != orchidea::DEFAULT_SR) {
 			throw std::runtime_error ("invalid sampling rate");
 		}
 		if (channels > 2) {
@@ -343,7 +343,7 @@ void create_sound_mix (const std::vector<std::string>& files,
 		lengths.push_back(r);
 	}
 
-	int revSamples = dry_wet[1] == 0 ? 0 :  (int) (DEFAULT_SR * t60);
+	int revSamples = dry_wet[1] == 0 ? 0 :  (int) (orchidea::DEFAULT_SR * t60);
 	int m = 0;
 	int maxLen = ceil (maximum<int> (&lengths[0], lengths.size (), m) *
 		(1. / minimum<T> (&ratios[0], ratios.size (), m)));
@@ -376,10 +376,10 @@ void create_sound_mix (const std::vector<std::string>& files,
 		}
 
 		if (dry_wet[1] != 0) { // skip computing if all dry
-			ClassicVerb<T> cl(DEFAULT_SR, (maxLen + revSamples), 6, 1, 0);
+			ClassicVerb<T> cl(orchidea::DEFAULT_SR, (maxLen + revSamples), 6, 1, 0);
 			cl.t60(t60);
 			cl.gains(dry_wet[0], 0, dry_wet[1]);
-			ClassicVerb<T> cr(DEFAULT_SR, (maxLen + revSamples), 6, 1, 23);
+			ClassicVerb<T> cr(orchidea::DEFAULT_SR, (maxLen + revSamples), 6, 1, 23);
 			cr.t60(t60);
 			cr.gains(dry_wet[0], 0, dry_wet[1]);
 

@@ -27,7 +27,7 @@ struct ConnectionModel {
         std::vector<T> outright;
         for (unsigned i = 0; i < models.size (); ++i) {
             solutions_summary << "[ segment "
-                << ((float) models[i]->segment->start / DEFAULT_SR * 1000.) << std::endl;
+                << ((float) models[i]->segment->start / orchidea::DEFAULT_SR * 1000.) << std::endl;
 
             models[i]->solutions[indices[i]].generate (outleft, outright,
                 solutions_summary,
@@ -57,7 +57,7 @@ struct ConnectionModel {
 		std::vector<T> outright;
 		for (unsigned i = 0; i < models.size (); ++i) {
 			solutions_summary << "[ segment "
-				<< ((float) models[i]->segment->start / DEFAULT_SR 	* 1000.) << std::endl;
+				<< ((float) models[i]->segment->start / orchidea::DEFAULT_SR 	* 1000.) << std::endl;
 
 			models[i]->solutions[indices[i]].generate (outleft, outright,
 				solutions_summary,
@@ -73,7 +73,7 @@ struct ConnectionModel {
 
 		std::stringstream mm;
 		mm << prefix << "connection.wav";
-		WavOutFile outfile (mm.str ().c_str (), DEFAULT_SR, 16, 2);
+		WavOutFile outfile (mm.str ().c_str (), orchidea::DEFAULT_SR, 16, 2);
 		outfile.write(&mix[0], outleft.size () * 2);
 	}
     

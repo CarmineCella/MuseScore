@@ -35,7 +35,7 @@ struct OrchestrationModel {
 			 parameters->max_export_solutions : solutions.size ();
 
 		solutions_summary << "(segment "
-			<< ((float) segment->start / DEFAULT_SR * 1000.) << std::endl;
+			<< ((float) segment->start / orchidea::DEFAULT_SR * 1000.) << std::endl;
 
 		for (unsigned i = 0; i < max_sols; ++i) {
 			std::vector<T> outleft;
@@ -50,7 +50,7 @@ struct OrchestrationModel {
 			std::stringstream wav_name;
 			wav_name << prefix << "solution." << std::setw(4) << std::setfill('0')
 				<< i + 1 << ".wav";
-			WavOutFile outfile (wav_name.str ().c_str(), DEFAULT_SR, 16, 2);
+			WavOutFile outfile (wav_name.str ().c_str(), orchidea::DEFAULT_SR, 16, 2);
 			outfile.write(&mix[0], outleft.size () * 2);
 		}
 		solutions_summary << ")" << std::endl;
@@ -66,7 +66,7 @@ struct OrchestrationModel {
             return;
         }
 
-        data->onset = ((double)segment->start / DEFAULT_SR * 1000);
+        data->onset = ((double)segment->start / orchidea::DEFAULT_SR * 1000);
         solutions[solution_number].get_instrument_data(segment, parameters, database, solution_number, instrument_name, data, start_from_index);
     }
 
@@ -94,7 +94,7 @@ struct OrchestrationModel {
 		// FIXME: do we need to export current orchestra?
 
 		std::stringstream tmp;
-		tmp << ((float) segment->start / DEFAULT_SR * 1000.);
+		tmp << ((float) segment->start / orchidea::DEFAULT_SR * 1000.);
 		result.push_back (tmp.str ());
 
 		// fall back - copy segments data in a new vector that has start time

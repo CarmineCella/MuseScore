@@ -343,8 +343,8 @@ void makeWindow (T* out, int N, T a0, T a1, T a2) {
 	// .54, .46, 0   --> hamming
 	// .42, .5, 0.08 --> blackman
 	for (int i = 0; i < N; ++i) {
-		out[i] = a0 - a1 * cos ((TWOPI * (T) i) / (N - 1)) + a2 *
-				 cos ((2 * TWOPI * (T) i) / (N - 1)); // hamming, hann or blackman
+		out[i] = a0 - a1 * cos ((orchidea::TWOPI * (T) i) / (N - 1)) + a2 *
+				 cos ((2 * orchidea::TWOPI * (T) i) / (N - 1)); // hamming, hann or blackman
 	}
 }
 

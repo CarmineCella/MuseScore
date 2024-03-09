@@ -150,7 +150,7 @@ inline T centroid(
 	}
 
 	// FIXME: is it right or we should compare with != 0?
-	return (sumWeigth >= MINIMUM_REASONABLE_THRESHOLD ?
+	return (sumWeigth >= orchidea::MINIMUM_REASONABLE_THRESHOLD ?
 			sumWeigthDistance / sumWeigth : 0);
 }
 
@@ -422,7 +422,7 @@ template <typename T>
 T kullbackLeibler (const T* p, const T* q, int size){
 	T d = 0;
 	for (int i = 0; i < size; ++i){
-		d += p[i] * log (p[i] / (q[i] + EPS));
+		d += p[i] * log (p[i] / (q[i] + orchidea::EPS));
 	}
 	if (std::isnan(d) || std::isinf(d)) return 0;
 	else return d;
@@ -563,7 +563,7 @@ T DTWDistance (const std::vector<T>& s, const std::vector<T>& t, T positive_pena
 
 template <typename T>
 T frand(T min, T max) {
-	return ((max - min) * ((T)rand() / RMAX) + min);
+	return ((max - min) * ((T)rand() / orchidea::RMAX) + min);
 }
 
 #endif	// ALGORITHMS_H

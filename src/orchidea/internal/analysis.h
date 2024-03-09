@@ -25,7 +25,7 @@ void compute_features (const T* buffer, int samples, std::vector<T>& features,
 	int bsize, int hop, int ncoeff, const std::string& type) {
 	features.resize(ncoeff, 0); // + 1, 0); // nrg
 
-	MFCC<T> mfcc (DEFAULT_SR, NUM_FILTERS, bsize);
+	MFCC<T> mfcc (orchidea::DEFAULT_SR, NUM_FILTERS, bsize);
 	AbstractFFT<T>* fft = createFFT<T>(bsize);
 
 	T* cdata = new T[bsize * 2];
@@ -74,7 +74,7 @@ void compute_features (const T* buffer, int samples, std::vector<T>& features,
 		}
 	} else if (type == "logspec") {
 		for (unsigned j = 0; j < ncoeff; ++j) {
-			features[j] = log (avg_coeffs[2 * j] + EPS);
+			features[j] = log (avg_coeffs[2 * j] + orchidea::EPS);
 		}
 	} else if (type == "specpeaks") {
 		for (unsigned j = 0; j < bsize; ++j) {
@@ -115,7 +115,7 @@ void compute_features (const T* buffer, int samples, std::vector<T>& features,
 			spectrum[j] = avg_coeffs[2 * j];
 		}
 		T* freq = new T[bsize];
-		T freqPerBin = (DEFAULT_SR) / (T) bsize;
+		T freqPerBin = (orchidea::DEFAULT_SR) / (T) bsize;
 
 		for (int i = 0; i < bsize; ++i) {
 			freq[i] = (T) i * freqPerBin;
@@ -150,7 +150,7 @@ void compute_features (const char* name, std::vector<T>& features,
 	int channels = in.getNumChannels ();
 	int bits = in.getNumBits();
 
-	if (sr != DEFAULT_SR) {
+	if (sr != orchidea::DEFAULT_SR) {
 		throw std::runtime_error ("invalid sampling rate");
 	}
 	if (channels > 2) {
@@ -244,7 +244,7 @@ void partials_to_notes (const T* buffer, int samples, std::map<std::string, int>
 	locmax(&spectrum[0], bsize / 2, peaks);
 
 	T* freq = new T[bsize / 2];
-	ampFreqQuad(&spectrum[0], freq, bsize / 2, DEFAULT_SR);
+	ampFreqQuad(&spectrum[0], freq, bsize / 2, orchidea::DEFAULT_SR);
 
 	Hz2Note<T> hz2n;
 	for (long i = 0; i < ((long)peaks.size ()) - 1; ++i) {
@@ -262,8 +262,8 @@ void partials_to_notes (const T* buffer, int samples, std::map<std::string, int>
 		}
 	}
 
-	// WavOutFile out("estimated_target.wav", DEFAULT_SR, 16, 1);
-	// unsigned samplesN = (unsigned) (2. * DEFAULT_SR);
+	// WavOutFile out("estimated_target.wav", orchidea::DEFAULT_SR, 16, 1);
+	// unsigned samplesN = (unsigned) (2. * orchidea::DEFAULT_SR);
 	// T* buff = new T[samplesN];
 	// memset(buff, 0, sizeof (T) * samplesN);
 
@@ -273,7 +273,7 @@ void partials_to_notes (const T* buffer, int samples, std::map<std::string, int>
 	// for (unsigned i = 0; i < samplesN; ++i) {
 	// 	for (unsigned j = 0; j < peaks.size (); ++j) {
 	// 		buff[i] += spectrum[peaks[j]] * sin (2. * M_PI * freq[peaks[j]]
-	// 			* ((T) i / DEFAULT_SR));
+	// 			* ((T) i / orchidea::DEFAULT_SR));
 	// 	}
 	// 	buff[i] *= .125 * win[i];
 	// }
@@ -297,7 +297,7 @@ void partials_to_notes (const char* name, std::map<std::string, int>& notes,
 	int channels = in.getNumChannels ();
 	int bits = in.getNumBits();
 
-	if (sr != DEFAULT_SR) {
+	if (sr != orchidea::DEFAULT_SR) {
 		throw std::runtime_error ("invalid sampling rate");
 	}
 	if (channels > 2) {

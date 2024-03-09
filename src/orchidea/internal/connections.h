@@ -34,7 +34,7 @@ struct ClosestSolutions {
 			it != orchestrations.end (); ++it) {
 			std::vector<T> values (it->segment->features.size (), 0);
 
-			T minDist = LARGE_VALUE;
+			T minDist = orchidea::LARGE_VALUE;
 			int argmin = 0;
 			for (unsigned j = 0; j < it->solutions.size (); ++j) {
 				AdditiveForecast<T>::compute(it->solutions[j], 

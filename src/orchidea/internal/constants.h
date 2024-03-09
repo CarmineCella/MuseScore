@@ -13,9 +13,8 @@ namespace orchidea{
     extern const double LARGE_VALUE = 1000000000;
 
     extern const double PI = 4. * atan ((double) 1.);
-    #ifndef TWOPI
     extern const double TWOPI = 8. * atan ((double) 1.);
-    #endif
+
 
 
     extern const double LOG2 = (double) log ((double) 2.);
