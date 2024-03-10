@@ -66,7 +66,7 @@ void extract_symbols (DB_entry<T>& e) {
 		}
 	}
 }
-void insert_symbol (std::map<std::string, std::vector<int> >& coll,
+static void insert_symbol (std::map<std::string, std::vector<int> >& coll,
 	const std::string& key, int index) {
 	std::map<std::string, std::vector<int> >::iterator it = coll.find (key);
 	if (it == coll.end ()) {

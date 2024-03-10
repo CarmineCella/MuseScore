@@ -24,7 +24,7 @@
 #include <deque>
 
 // -----------------------------------------------------------------------------
-std::string removePath (const std::string& in) {
+static std::string removePath (const std::string& in) {
 	size_t pos = std::string::npos;
 	pos = in.find_last_of ("/");
 	if (pos != std::string::npos) {
@@ -32,7 +32,7 @@ std::string removePath (const std::string& in) {
 	} else return in;
 }
 
-std::string removeExtension (const std::string& in) {
+static std::string removeExtension (const std::string& in) {
 	size_t pos = std::string::npos;
 	pos = in.find_last_of (".");
 	if (pos != std::string::npos) {
@@ -40,7 +40,7 @@ std::string removeExtension (const std::string& in) {
 	} else return in;
 }
 
-std::string trim (std::string const& source,
+static std::string trim (std::string const& source,
 	char const* delims = " \t\r\n") {
 	std::string result (source);
 	std::string::size_type index = result.find_last_not_of (delims);
@@ -55,7 +55,7 @@ std::string trim (std::string const& source,
 	return result;
 }
 
-void erase_substring (std::string & mainStr, const std::string & toErase) {
+static void erase_substring (std::string & mainStr, const std::string & toErase) {
 	// Search for the substring in string
 	size_t pos = mainStr.find(toErase);
 
@@ -67,7 +67,7 @@ void erase_substring (std::string & mainStr, const std::string & toErase) {
 
 
 
-std::vector<std::string> split_by_pipe (const std::string& input) {
+static std::vector<std::string> split_by_pipe (const std::string& input) {
     std::istringstream ss(input);
     std::string token;
 
@@ -81,8 +81,8 @@ std::vector<std::string> split_by_pipe (const std::string& input) {
 
 // -----------------------------------------------------------------------------
 // search for regexp at beginning of text
-bool match_star (int c, char *regexp, char *text);
-bool match_here (char* regexp, char* text) {
+static bool match_star (int c, char *regexp, char *text);
+static bool match_here (char* regexp, char* text) {
     if (regexp[0] == '\0') return true;
     if (regexp[1] == '*') return match_star (regexp[0], regexp + 2, text);
     if (regexp[0] == '$' && regexp[1] == '\0') return *text == '\0';
@@ -93,7 +93,7 @@ bool match_here (char* regexp, char* text) {
 }
 
 // leftmost longest search for c*regexp */
-bool match_star (int c, char *regexp, char *text) {
+static bool match_star (int c, char *regexp, char *text) {
     char *t;
 
     for (t = text; *t != '\0' && (*t == c || c == '.'); t++)
@@ -105,7 +105,7 @@ bool match_star (int c, char *regexp, char *text) {
 }
 
 // search for regexp anywhere in text
-bool match (char* regexp, char* text) {
+static bool match (char* regexp, char* text) {
     if (regexp[0] == '^')
         return match_here (regexp + 1, text);
     do {
@@ -115,7 +115,7 @@ bool match (char* regexp, char* text) {
 }
 // -----------------------------------------------------------------------------
 template <typename T>
-void save_vector (const char* file, const std::vector<T>& v) {
+static void save_vector (const char* file, const std::vector<T>& v) {
 	std::ofstream out (file);
 	if (!out.good ()) {
 		throw std::runtime_error ("cannot create output file");
@@ -128,7 +128,7 @@ void save_vector (const char* file, const std::vector<T>& v) {
 }
 // -----------------------------------------------------------------------------
 template <typename T>
-std::ostream& print_coll (std::ostream& out, std::map<std::string, std::vector<T> >& coll,
+static std::ostream& print_coll (std::ostream& out, std::map<std::string, std::vector<T> >& coll,
 	int offset, int columns) {
 	int nl = 0;
 	int count = 0;
@@ -147,7 +147,7 @@ std::ostream& print_coll (std::ostream& out, std::map<std::string, std::vector<T
 }
 
 template <typename T>
-std::ostream& print_coll (std::ostream& out, std::map<std::string, T >& coll,
+static std::ostream& print_coll (std::ostream& out, std::map<std::string, T >& coll,
 	int offset, int columns) {
 
 	std::map<std::string, std::vector<int> > remap;
@@ -160,7 +160,7 @@ std::ostream& print_coll (std::ostream& out, std::map<std::string, T >& coll,
 	return print_coll<T>(out, remap, offset, columns);
 }
 // -------------------------------------------------------------------------- //
-void listdir (const char *name, const char* trailing_path, std::vector<std::string>& list) {
+static void listdir (const char *name, const char* trailing_path, std::vector<std::string>& list) {
     DIR *dir;
     struct dirent *entry;
 
@@ -188,7 +188,7 @@ void listdir (const char *name, const char* trailing_path, std::vector<std::stri
 }
 // -----------------------------------------------------------------------------
 template <typename T>
-void interleave (T* stereo, const T* l, const T* r, int n) {
+static void interleave (T* stereo, const T* l, const T* r, int n) {
 	for (int i = 0; i < n; ++i) {
 		stereo[2 * i] = l[i];
 		stereo[2 * i + 1] = r[i];
@@ -196,7 +196,7 @@ void interleave (T* stereo, const T* l, const T* r, int n) {
 }
 
 template <typename T>
-void deinterleave (const T* stereo, T* l, T* r, int n) {
+static void deinterleave (const T* stereo, T* l, T* r, int n) {
 	for (int i = 0; i < n; ++i) {
 		l[i] = stereo[2 * i];
 		r[i] = stereo[2 * i + 1];
@@ -206,13 +206,13 @@ void deinterleave (const T* stereo, T* l, T* r, int n) {
 // -----------------------------------------------------------------------------
 
 template <typename T>
-T cents_to_ratio (int cents) {
+static T cents_to_ratio (int cents) {
 	T c = cents;
 	c /= 1200.;
 	return std::pow (2., c);
 }
 
-long pitch_buffer_to_midi (char *pitch_string) {
+static long pitch_buffer_to_midi (char *pitch_string) {
     int base = 0;
     char *cur = pitch_string;
     switch (*cur) {
@@ -259,7 +259,7 @@ long pitch_buffer_to_midi (char *pitch_string) {
     return (atoi(cur)+1)*12+base+alt;
 }
 
-long pitch_buffer_to_cents (char *pitch_string) {
+static long pitch_buffer_to_cents (char *pitch_string) {
     return pitch_buffer_to_midi(pitch_string)*100;
 }
 
@@ -271,7 +271,7 @@ inline bool file_exists (const std::string& name) {
 #define MINIMUM_FADEOUT 2205.
 
 template <typename T>
-void create_sound_mix (const std::vector<std::string>& files,
+static void create_sound_mix (const std::vector<std::string>& files,
 	const std::vector<std::string>& sound_paths,
 	const std::vector<T>& ratios,
 	const std::vector<T>& pans,
@@ -411,7 +411,7 @@ void create_sound_mix (const std::vector<std::string>& files,
 
 // not tested
 template <typename T>
-void repitch_sample (
+static void repitch_sample (
 	const std::vector<T>& in_mono, // two channels must be mixed to 1 (average)
 	std::vector<T>& out_left,
 	std::vector<T>& out_right,
@@ -447,7 +447,7 @@ void repitch_sample (
 // Could be improved
 // inframes contains INTERLEAVED samples for all channels
 template <typename T>
-long resample(std::vector<T>& inframes, std::vector<T>& outframes, double old_sr,
+static long resample(std::vector<T>& inframes, std::vector<T>& outframes, double old_sr,
 	double new_sr, double fmax, double window_width, long num_channels) {
     double factor = new_sr / old_sr;
     long num_in_frames = inframes.size() / num_channels;

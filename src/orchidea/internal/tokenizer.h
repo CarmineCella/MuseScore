@@ -8,7 +8,7 @@
 #include <string>
 #include <deque>
 
-void tokenize (const std::string& str, std::deque<std::string>& result,
+static void tokenize (const std::string& str, std::deque<std::string>& result,
                 const std::string& delimiters, const std::string& delimiters_preserve = "",
                 const std::string& quote = "\"", const std::string& esc = "\\" ) {
     // clear the deque
