@@ -67,6 +67,7 @@ struct SoundTarget : public TargetI<T> {
                                       TargetI<T>::parameters->partials_window,
                                       TargetI<T>::parameters->partials_window / 4,
                                       TargetI<T>::parameters->partials_filtering);
+				
                 for (unsigned i = 0; i < TargetI<T>::parameters->extra_pitches.size (); ++i) {
                     seg.notes[TargetI<T>::parameters->extra_pitches[i]] = 0;
                 }

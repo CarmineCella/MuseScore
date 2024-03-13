@@ -57,6 +57,8 @@
 #include "../../orchidea/internal/ConnectionModel.h"
 #include "../../orchidea/internal/connections.h"
 
+
+
 namespace mu::appshell {
 class ApplicationActionController : public QObject, public IApplicationActionController, public actions::Actionable, public async::Asyncable
 {
@@ -81,6 +83,9 @@ public:
     void onDragEnterEvent(QDragEnterEvent* event) override;
     void onDragMoveEvent(QDragMoveEvent* event) override;
     void onDropEvent(QDropEvent* event) override;
+    Parameters<float> params;
+    TargetI<float>* target;
+    Source<float> source;
 
 private:
     bool eventFilter(QObject* watched, QEvent* event) override;

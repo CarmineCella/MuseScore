@@ -114,16 +114,57 @@ void ApplicationActionController::onDropEvent(QDropEvent* event)
             io::path_t filePath { url };
 
             if (getFileExt (filePath.c_str ()) ==  (std::string) "txt") {
-                interactive()->info(std::string("Orchidea"),
-                    std::string ("Orchestration script loaded"),
+                try{
+                    params = Parameters<float>(filePath.c_str());
+                    int temp = params.partials_window;
+                    interactive()->info(std::string("Orchidea"),
+                    std::string ("Orchestration script loaded from: \n") + filePath.c_str(),
                     {}, 0, IInteractive::Option::WithIcon);
+
+                }catch(std::runtime_error e){
+                    interactive()->info(std::string("Orchidea"),
+                    std::string ("ERROR: Unable to parse Parameters for Orchidea: \n") + e.what(),
+                    {}, 0, IInteractive::Option::WithIcon);
+                }
+                
+               
+
 
             }
 
             if (getFileExt (filePath.c_str ()) == (std::string) "wav") {
-                interactive()->info(std::string("Orchidea"),
+                
+                try{
+                    Source<float> source(&params);
+                }catch(std::runtime_error e){
+                    interactive()->info(std::string("Orchidea"),
+                    std::string ("ERROR: Unable to Generate Source from Params: \n") + e.what(),
+                    {}, 0, IInteractive::Option::WithIcon);
+                }
+
+                try{
+                    if (params.segmentation == "flux") {
+                        target = new SoundTarget<float, FluxSegmentation> (filePath.c_str(), &source, &params);
+                    } else if (params.segmentation == "powerflux") {
+                        target = new SoundTarget<float, PowerFluxSegmentation> (filePath.c_str(), &source, &params);
+                    } else if (params.segmentation == "frames") {
+                        target = new SoundTarget<float, Frames> (filePath.c_str(), &source, &params);
+                    } else {
+                        throw std::runtime_error ("invalid segmentation policy");
+                    }
+                    
+                    interactive()->info(std::string("Orchidea"),
                     std::string ("Orchestration completed. \n You lucky dog..."),
                     {}, 0, IInteractive::Option::WithIcon);
+
+                }catch(std::runtime_error e){
+                    interactive()->info(std::string("Orchidea"),
+                    std::string ("ERROR: Unable to Generate Target from Source & Params: \n") + e.what(),
+                    {}, 0, IInteractive::Option::WithIcon);
+                }
+                
+
+
 
             }
             
