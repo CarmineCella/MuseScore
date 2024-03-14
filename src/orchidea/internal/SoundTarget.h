@@ -21,7 +21,7 @@ template <typename T, template <typename X> class SegmentationPolicy>
 struct SoundTarget : public TargetI<T> {
 	SoundTarget (const char* name,
 		Source<T>* s, Parameters<T>* p) : TargetI<T> (s, p) {
-		analyze(name);
+		// analyze(name);
 	}
 
 	SoundTarget (Source<T>* s, Parameters<T>* p) : TargetI<T> (s, p) {

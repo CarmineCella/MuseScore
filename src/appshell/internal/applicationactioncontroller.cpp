@@ -37,21 +37,20 @@
 #include <string>
 #include <iostream>
 
-
-
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
 
-std::string getFileExt(const std::string& s) {
+std::string getFileExt(const std::string &s)
+{
     size_t i = s.rfind('.', s.length());
-    if (i != std::string::npos) {
-        return(s.substr(i+1, s.length() - i));
+    if (i != std::string::npos)
+    {
+        return (s.substr(i + 1, s.length() - i));
     }
 
-    return("");
+    return ("");
 }
-
 
 void ApplicationActionController::preInit()
 {
@@ -60,15 +59,14 @@ void ApplicationActionController::preInit()
 
 void ApplicationActionController::init()
 {
-    dispatcher()->reg(this, "quit", [this](const ActionData& args) {
+    dispatcher()->reg(this, "quit", [this](const ActionData &args)
+                      {
         bool isAllInstances = args.count() > 0 ? args.arg<bool>(0) : true;
         io::path_t installatorPath = args.count() > 1 ? args.arg<io::path_t>(1) : "";
-        quit(isAllInstances, installatorPath);
-    });
+        quit(isAllInstances, installatorPath); });
 
-    dispatcher()->reg(this, "restart", [this]() {
-        restart();
-    });
+    dispatcher()->reg(this, "restart", [this]()
+                      { restart(); });
 
     dispatcher()->reg(this, "fullscreen", this, &ApplicationActionController::toggleFullScreen);
 
@@ -82,140 +80,193 @@ void ApplicationActionController::init()
     dispatcher()->reg(this, "revert-factory", this, &ApplicationActionController::revertToFactorySettings);
 }
 
-void ApplicationActionController::onDragEnterEvent(QDragEnterEvent* event)
+void ApplicationActionController::onDragEnterEvent(QDragEnterEvent *event)
 {
     onDragMoveEvent(event);
 }
 
-void ApplicationActionController::onDragMoveEvent(QDragMoveEvent* event)
+void ApplicationActionController::onDragMoveEvent(QDragMoveEvent *event)
 {
-    const QMimeData* mime = event->mimeData();
+    const QMimeData *mime = event->mimeData();
     QList<QUrl> urls = mime->urls();
-    if (urls.count() > 0) {
-        const QUrl& url = urls.front();
-        if (projectFilesController()->isUrlSupported(url)
-            || (url.isLocalFile() && audio::synth::isSoundFont(io::path_t(url)))) {
+    if (urls.count() > 0)
+    {
+        const QUrl &url = urls.front();
+        if (projectFilesController()->isUrlSupported(url) || (url.isLocalFile() && audio::synth::isSoundFont(io::path_t(url))))
+        {
             event->setDropAction(Qt::LinkAction);
             event->acceptProposedAction();
         }
     }
 }
 
-void ApplicationActionController::onDropEvent(QDropEvent* event)
+void ApplicationActionController::onDropEvent(QDropEvent *event)
 {
-    const QMimeData* mime = event->mimeData();
+    const QMimeData *mime = event->mimeData();
     QList<QUrl> urls = mime->urls();
-    if (urls.count() > 0) {
-        const QUrl& url = urls.front();
+    if (urls.count() > 0)
+    {
+        const QUrl &url = urls.front();
         LOGD() << url;
 
         bool shouldBeHandled = false;
-        if (url.isLocalFile()) {
-            io::path_t filePath { url };
+        if (url.isLocalFile())
+        {
+            io::path_t filePath{url};
 
-            if (getFileExt (filePath.c_str ()) ==  (std::string) "txt") {
-                try{
+            if (getFileExt(filePath.c_str()) == (std::string) "txt")
+            {
+                try
+                {
                     params = Parameters<float>(filePath.c_str());
-                    int temp = params.partials_window;
                     interactive()->info(std::string("Orchidea"),
-                    std::string ("Orchestration script loaded from: \n") + filePath.c_str(),
-                    {}, 0, IInteractive::Option::WithIcon);
-
-                }catch(std::runtime_error e){
-                    interactive()->info(std::string("Orchidea"),
-                    std::string ("ERROR: Unable to parse Parameters for Orchidea: \n") + e.what(),
-                    {}, 0, IInteractive::Option::WithIcon);
+                                        std::string("Orchestration script loaded from: \n") + filePath.c_str(),
+                                        {}, 0, IInteractive::Option::WithIcon);
                 }
-                
-               
-
-
+                catch (std::runtime_error e)
+                {
+                    interactive()->info(std::string("Orchidea"),
+                                        std::string("ERROR: Unable to parse Parameters for Orchidea: \n") + e.what(),
+                                        {}, 0, IInteractive::Option::WithIcon);
+                }
             }
 
-            if (getFileExt (filePath.c_str ()) == (std::string) "wav") {
-                
-                try{
+            if (getFileExt(filePath.c_str()) == (std::string) "wav")
+            {
+                mu::framework::Progress* prog;
+
+                try
+                {
                     Source<float> source(&params);
-                }catch(std::runtime_error e){
+                }
+                catch (std::runtime_error e)
+                {
                     interactive()->info(std::string("Orchidea"),
-                    std::string ("ERROR: Unable to Generate Source from Params: \n") + e.what(),
-                    {}, 0, IInteractive::Option::WithIcon);
+                                        std::string("ERROR: Unable to Generate Source from Params: \n") + e.what(),
+                                        {}, 0, IInteractive::Option::WithIcon);
                 }
 
-                try{
-                    if (params.segmentation == "flux") {
-                        target = new SoundTarget<float, FluxSegmentation> (filePath.c_str(), &source, &params);
-                    } else if (params.segmentation == "powerflux") {
-                        target = new SoundTarget<float, PowerFluxSegmentation> (filePath.c_str(), &source, &params);
-                    } else if (params.segmentation == "frames") {
-                        target = new SoundTarget<float, Frames> (filePath.c_str(), &source, &params);
-                    } else {
-                        throw std::runtime_error ("invalid segmentation policy");
+                try
+                {
+                    if (params.segmentation == "flux")
+                    {
+                        target = new SoundTarget<float, FluxSegmentation>(filePath.c_str(), &source, &params);
                     }
+                    else if (params.segmentation == "powerflux")
+                    {
+                        target = new SoundTarget<float, PowerFluxSegmentation>(filePath.c_str(), &source, &params);
+                    }
+                    else if (params.segmentation == "frames")
+                    {
+                        target = new SoundTarget<float, Frames>(filePath.c_str(), &source, &params);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("invalid segmentation policy");
+                    }
+
+                    LOGI() << "Orchidea: done (" << target->segments.size() << " segments) \n";
+                    if (params.partials_filtering)
+                    {
+                        for (unsigned i = 0; i < target->segments.size(); ++i)
+                        {
+                            // LOGI() << "pitches for segment " << std::setw(4) << std::setfill('0') << i << " ";
+                            print_coll<int>(std::cout, target->segments[i].notes, 25, 5);
+                            std::cout << std::endl;
+                        }
+                    }
+                    GeneticOrchestra<float, AdditiveForecast, ClosestSolutions> ga (&params);
+                    Session<float, ClosestSolutions> session (&source, &params, &ga);
+                    std::vector<OrchestrationModel<float> > orchestrations;
+                    session.orchestrate(*target, orchestrations);
+                    ConnectionModel<float> connection;
+                    LOGI() << "Orchidea: Connection Model instantiated \n";
                     
-                    interactive()->info(std::string("Orchidea"),
-                    std::string ("Orchestration completed. \n You lucky dog..."),
-                    {}, 0, IInteractive::Option::WithIcon);
 
-                }catch(std::runtime_error e){
+                    //     session.connect (orchestrations, connection);  // <<< this causes crash
+
+                    // session.export_solutions ("", orchestrations, connection); // this
+                    // std::ofstream numsegm ("segments.txt");
+                    // numsegm << orchestrations.size ();
+		            // numsegm.close ();
+
+                    //interactive()->showProgress(std::string("Orchidea"), prog);
+
+
+
+
+
+
+
                     interactive()->info(std::string("Orchidea"),
-                    std::string ("ERROR: Unable to Generate Target from Source & Params: \n") + e.what(),
-                    {}, 0, IInteractive::Option::WithIcon);
+                                        std::string("Orchestration completed. \n You lucky dog..."),
+                                        {}, 0, IInteractive::Option::WithIcon);
                 }
-                
-
-
-
+                catch (std::runtime_error e)
+                {
+                    interactive()->info(std::string("Orchidea"),
+                                        std::string("ERROR: Unable to Generate Target from Source & Params: \n") + e.what(),
+                                        {}, 0, IInteractive::Option::WithIcon);
+                }
             }
-            
-            if (audio::synth::isSoundFont(filePath)) {
-                async::Async::call(this, [this, filePath]() {
+
+            if (audio::synth::isSoundFont(filePath))
+            {
+                async::Async::call(this, [this, filePath]()
+                                   {
                     Ret ret = soundFontRepository()->addSoundFont(filePath);
                     if (!ret) {
                         LOGE() << ret.toString();
-                    }
-                });
+                    } });
                 shouldBeHandled = true;
             }
-
-
-        } else if (projectFilesController()->isUrlSupported(url)) {
-            async::Async::call(this, [this, url]() {
+        }
+        else if (projectFilesController()->isUrlSupported(url))
+        {
+            async::Async::call(this, [this, url]()
+                               {
                 Ret ret = projectFilesController()->openProject(url);
                 if (!ret) {
                     LOGE() << ret.toString();
-                }
-            });
+                } });
             shouldBeHandled = true;
         }
 
-        if (shouldBeHandled) {
+        if (shouldBeHandled)
+        {
             event->accept();
-        } else {
+        }
+        else
+        {
             event->ignore();
         }
     }
 }
 
-bool ApplicationActionController::eventFilter(QObject* watched, QEvent* event)
+bool ApplicationActionController::eventFilter(QObject *watched, QEvent *event)
 {
-    if ((event->type() == QEvent::Close && watched == mainWindow()->qWindow())
-        || event->type() == QEvent::Quit) {
+    if ((event->type() == QEvent::Close && watched == mainWindow()->qWindow()) || event->type() == QEvent::Quit)
+    {
         bool accepted = quit(false);
         event->setAccepted(accepted);
 
         return true;
     }
 
-    if (event->type() == QEvent::FileOpen && watched == qApp) {
-        const QFileOpenEvent* openEvent = static_cast<const QFileOpenEvent*>(event);
+    if (event->type() == QEvent::FileOpen && watched == qApp)
+    {
+        const QFileOpenEvent *openEvent = static_cast<const QFileOpenEvent *>(event);
         const QUrl url = openEvent->url();
 
-        if (projectFilesController()->isUrlSupported(url)) {
-            if (startupScenario()->startupCompleted()) {
+        if (projectFilesController()->isUrlSupported(url))
+        {
+            if (startupScenario()->startupCompleted())
+            {
                 dispatcher()->dispatch("file-open", ActionData::make_arg1<QUrl>(url));
-            } else {
-                startupScenario()->setStartupScoreFile(project::ProjectFile { url });
+            }
+            else
+            {
+                startupScenario()->setStartupScoreFile(project::ProjectFile{url});
             }
 
             return true;
@@ -225,26 +276,31 @@ bool ApplicationActionController::eventFilter(QObject* watched, QEvent* event)
     return QObject::eventFilter(watched, event);
 }
 
-bool ApplicationActionController::quit(bool isAllInstances, const io::path_t& installerPath)
+bool ApplicationActionController::quit(bool isAllInstances, const io::path_t &installerPath)
 {
-    if (m_quiting) {
+    if (m_quiting)
+    {
         return false;
     }
 
     m_quiting = true;
-    DEFER {
+    DEFER
+    {
         m_quiting = false;
     };
 
-    if (!projectFilesController()->closeOpenedProject()) {
+    if (!projectFilesController()->closeOpenedProject())
+    {
         return false;
     }
 
-    if (isAllInstances) {
+    if (isAllInstances)
+    {
         multiInstancesProvider()->quitForAll();
     }
 
-    if (multiInstancesProvider()->instances().size() == 1 && !installerPath.empty()) {
+    if (multiInstancesProvider()->instances().size() == 1 && !installerPath.empty())
+    {
 #if defined(Q_OS_LINUX)
         interactive()->revealInFileBrowser(installerPath);
 #else
@@ -252,7 +308,8 @@ bool ApplicationActionController::quit(bool isAllInstances, const io::path_t& in
 #endif
     }
 
-    if (multiInstancesProvider()->instances().size() > 1) {
+    if (multiInstancesProvider()->instances().size() > 1)
+    {
         multiInstancesProvider()->notifyAboutInstanceWasQuited();
     }
 
@@ -262,10 +319,14 @@ bool ApplicationActionController::quit(bool isAllInstances, const io::path_t& in
 
 void ApplicationActionController::restart()
 {
-    if (projectFilesController()->closeOpenedProject()) {
-        if (multiInstancesProvider()->instances().size() == 1) {
+    if (projectFilesController()->closeOpenedProject())
+    {
+        if (multiInstancesProvider()->instances().size() == 1)
+        {
             application()->restart();
-        } else {
+        }
+        else
+        {
             multiInstancesProvider()->quitAllAndRestartLast();
 
             QCoreApplication::quit();
@@ -275,7 +336,7 @@ void ApplicationActionController::restart()
 
 void ApplicationActionController::toggleFullScreen()
 {
-    mainWindow()->toggleFullScreen();   
+    mainWindow()->toggleFullScreen();
 }
 
 void ApplicationActionController::openAboutDialog()
@@ -307,7 +368,8 @@ void ApplicationActionController::openAskForHelpPage()
 
 void ApplicationActionController::openPreferencesDialog()
 {
-    if (multiInstancesProvider()->isPreferencesAlreadyOpened()) {
+    if (multiInstancesProvider()->isPreferencesAlreadyOpened())
+    {
         multiInstancesProvider()->activateWindowWithOpenedPreferences();
         return;
     }
@@ -323,11 +385,12 @@ void ApplicationActionController::revertToFactorySettings()
 
     int revertBtn = int(IInteractive::Button::Apply);
     IInteractive::Result result = interactive()->warning(title, question,
-                                                         { interactive()->buttonData(IInteractive::Button::Cancel),
-                                                           IInteractive::ButtonData(revertBtn, trc("appshell", "Revert"), true) },
+                                                         {interactive()->buttonData(IInteractive::Button::Cancel),
+                                                          IInteractive::ButtonData(revertBtn, trc("appshell", "Revert"), true)},
                                                          revertBtn);
 
-    if (result.standardButton() == IInteractive::Button::Cancel) {
+    if (result.standardButton() == IInteractive::Button::Cancel)
+    {
         return;
     }
 
@@ -340,11 +403,12 @@ void ApplicationActionController::revertToFactorySettings()
 
     int restartBtn = int(IInteractive::Button::Apply);
     result = interactive()->question(title, question,
-                                     { interactive()->buttonData(IInteractive::Button::Cancel),
-                                       IInteractive::ButtonData(restartBtn, trc("appshell", "Restart"), true) },
+                                     {interactive()->buttonData(IInteractive::Button::Cancel),
+                                      IInteractive::ButtonData(restartBtn, trc("appshell", "Restart"), true)},
                                      restartBtn);
 
-    if (result.standardButton() == IInteractive::Button::Cancel) {
+    if (result.standardButton() == IInteractive::Button::Cancel)
+    {
         return;
     }
 

@@ -331,7 +331,7 @@ template <typename T>
 			return new FFT<24, T> ();
 			break;
 		default:
-			throw std::runtime_error ("invalid size requested for fft");
+			throw std::runtime_error ("invalid size requested for fft: ");
 		}
 }
 
