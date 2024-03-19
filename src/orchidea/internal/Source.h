@@ -80,9 +80,7 @@ static void insert_symbol (std::map<std::string, std::vector<int> >& coll,
 
 template <typename T>
 struct Source {
-	Source(){
-		
-	}
+
 	Source (Parameters<T>* params) {
 		parameters = params;
 		load ();

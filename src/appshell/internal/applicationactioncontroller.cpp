@@ -30,6 +30,7 @@
 #include "async/async.h"
 #include "audio/soundfonttypes.h"
 
+
 #include "defer.h"
 #include "translation.h"
 #include "log.h"
@@ -40,6 +41,8 @@
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
+using namespace mu::engraving;
+using namespace mu::context;
 
 std::string getFileExt(const std::string &s)
 {
@@ -78,6 +81,9 @@ void ApplicationActionController::init()
     dispatcher()->reg(this, "preference-dialog", this, &ApplicationActionController::openPreferencesDialog);
 
     dispatcher()->reg(this, "revert-factory", this, &ApplicationActionController::revertToFactorySettings);
+    params = 0;
+    source = 0;
+    target = 0;
 }
 
 void ApplicationActionController::onDragEnterEvent(QDragEnterEvent *event)
@@ -102,7 +108,7 @@ void ApplicationActionController::onDragMoveEvent(QDragMoveEvent *event)
 
 void ApplicationActionController::onDropEvent(QDropEvent *event)
 {
-    const QMimeData *mime = event->mimeData();
+    const QMimeData *mime = event->mimeData();    
     QList<QUrl> urls = mime->urls();
     if (urls.count() > 0)
     {
@@ -116,12 +122,42 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
 
             if (getFileExt(filePath.c_str()) == (std::string) "txt")
             {
+                //first, let's report some info about the current score
+                
+                
+ 
+                // std::cout << "Number of Staves: " << (int)score->nstaves()  << std::endl;
+                // std::cout << "Stave Names: " << std::endl;
+                // for(auto i : score::staves()) {std::cout << i << std::endl;}
+                
                 try
                 {
-                    params = Parameters<float>(filePath.c_str());
+                    if(params){delete params;}
+                    params = new Parameters<float>(filePath.c_str());
+
+
+                    std::cout << "Orchestra: " << std::endl;
+                    for(auto i : params->orchestra){
+                        std::cout << "\t" << i << std::endl;
+                    }
+
+                    std::cout << "Partials filtering : " << (params->partials_filtering) << std::endl;
+                    std::cout << "db files path : " << std::endl;
+                    for(auto i : params->db_files){std::cout << "\t" << i << std::endl;}
+
+                    std::cout << "sound path : " << std::endl;
+                    for(auto i : params->sound_paths){std::cout << "\t" << i << std::endl;}
+
+                    if(source){delete source;}
+                    source = new Source<float> (params);
+                    source->dump(std::cout, 0, 0);
+
                     interactive()->info(std::string("Orchidea"),
-                                        std::string("Orchestration script loaded from: \n") + filePath.c_str(),
-                                        {}, 0, IInteractive::Option::WithIcon);
+                    std::string("Orchestration script loaded from: \n") + filePath.c_str(),
+                    {}, 0, IInteractive::Option::WithIcon);
+               
+    
+
                 }
                 catch (std::runtime_error e)
                 {
@@ -129,74 +165,49 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
                                         std::string("ERROR: Unable to parse Parameters for Orchidea: \n") + e.what(),
                                         {}, 0, IInteractive::Option::WithIcon);
                 }
-            }
-
-            if (getFileExt(filePath.c_str()) == (std::string) "wav")
+            }else if (getFileExt(filePath.c_str()) == (std::string) "wav")
             {
                 mu::framework::Progress* prog;
 
-                try
-                {
-                    Source<float> source(&params);
-                }
-                catch (std::runtime_error e)
-                {
-                    interactive()->info(std::string("Orchidea"),
-                                        std::string("ERROR: Unable to Generate Source from Params: \n") + e.what(),
-                                        {}, 0, IInteractive::Option::WithIcon);
-                }
+
 
                 try
-                {
-                    if (params.segmentation == "flux")
-                    {
-                        target = new SoundTarget<float, FluxSegmentation>(filePath.c_str(), &source, &params);
-                    }
-                    else if (params.segmentation == "powerflux")
-                    {
-                        target = new SoundTarget<float, PowerFluxSegmentation>(filePath.c_str(), &source, &params);
-                    }
-                    else if (params.segmentation == "frames")
-                    {
-                        target = new SoundTarget<float, Frames>(filePath.c_str(), &source, &params);
-                    }
-                    else
-                    {
-                        throw std::runtime_error("invalid segmentation policy");
-                    }
+                {   
+                    LOGI() << "Orchidea: trying target Allocation...";
+                    if(target){delete target;}
+                    target = new SoundTarget<float, FluxSegmentation >(filePath.c_str(), source, params);
+
+                    
+                    
 
                     LOGI() << "Orchidea: done (" << target->segments.size() << " segments) \n";
-                    if (params.partials_filtering)
+                    if (params->partials_filtering)
                     {
                         for (unsigned i = 0; i < target->segments.size(); ++i)
                         {
-                            // LOGI() << "pitches for segment " << std::setw(4) << std::setfill('0') << i << " ";
+                            std::cout << "pitches for segment " << std::setw(4) << std::setfill('0') << i << " ";
                             print_coll<int>(std::cout, target->segments[i].notes, 25, 5);
                             std::cout << std::endl;
                         }
+                        LOGI() << "Orchidea: partials_window: " << (params->partials_window);
                     }
-                    GeneticOrchestra<float, AdditiveForecast, ClosestSolutions> ga (&params);
-                    Session<float, ClosestSolutions> session (&source, &params, &ga);
-                    std::vector<OrchestrationModel<float> > orchestrations;
-                    session.orchestrate(*target, orchestrations);
+                    GeneticOrchestra<float, AdditiveForecast, ClosestSolutions> ga (params);
+                    Session<float, ClosestSolutions> session (source, params, &ga);
+                    std::vector<OrchestrationModel<float> > orchestrations; 
+                    session.orchestrate(*target, orchestrations); 
+                    LOGI() << "Orchidea: orchistrations.segment[0] : " << orchestrations[0].segment; 
                     ConnectionModel<float> connection;
                     LOGI() << "Orchidea: Connection Model instantiated \n";
                     
 
-                    //     session.connect (orchestrations, connection);  // <<< this causes crash
+                    session.connect(orchestrations, connection);  
 
-                    // session.export_solutions ("", orchestrations, connection); // this
-                    // std::ofstream numsegm ("segments.txt");
-                    // numsegm << orchestrations.size ();
-		            // numsegm.close ();
-
-                    //interactive()->showProgress(std::string("Orchidea"), prog);
-
-
-
-
-
-
+                    session.export_solutions ("", orchestrations, connection); 
+                    std::ofstream numsegm ("segments.txt");
+                    numsegm << orchestrations.size ();
+		            numsegm.close ();
+                    LOGI() << "Orchidea: segments.txt File Written";
+                   
 
                     interactive()->info(std::string("Orchidea"),
                                         std::string("Orchestration completed. \n You lucky dog..."),
@@ -241,6 +252,7 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
             event->ignore();
         }
     }
+
 }
 
 bool ApplicationActionController::eventFilter(QObject *watched, QEvent *event)

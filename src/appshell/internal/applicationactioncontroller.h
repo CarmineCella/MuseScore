@@ -57,6 +57,10 @@
 #include "../../orchidea/internal/ConnectionModel.h"
 #include "../../orchidea/internal/connections.h"
 
+#include "../engraving/dom/score.h"
+#include "../engraving/compat/scoreaccess.h"
+#include "../engraving/engravingmodule.h"
+
 
 
 namespace mu::appshell {
@@ -83,9 +87,10 @@ public:
     void onDragEnterEvent(QDragEnterEvent* event) override;
     void onDragMoveEvent(QDragMoveEvent* event) override;
     void onDropEvent(QDropEvent* event) override;
-    Parameters<float> params;
-    TargetI<float>* target;
-    Source<float> source;
+    Parameters<float>* params;
+    SoundTarget<float, FluxSegmentation>* target;
+    Source<float>* source;
+
 
 private:
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -109,9 +114,7 @@ private:
     bool m_quiting = false;
 
     async::Channel<actions::ActionCodeList> m_actionsReceiveAvailableChanged;
-    // Source<float>* source;
-    // Parameters<float> params;
-    // TargetI<float>* target;
+
 
     
 
