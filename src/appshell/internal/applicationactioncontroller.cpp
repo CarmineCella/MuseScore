@@ -38,11 +38,13 @@
 #include <string>
 #include <iostream>
 
+
 using namespace mu::appshell;
 using namespace mu::framework;
 using namespace mu::actions;
 using namespace mu::engraving;
 using namespace mu::context;
+using namespace mu::notation;
 
 std::string getFileExt(const std::string &s)
 {
@@ -84,6 +86,7 @@ void ApplicationActionController::init()
     params = 0;
     source = 0;
     target = 0;
+    
 }
 
 void ApplicationActionController::onDragEnterEvent(QDragEnterEvent *event)
@@ -113,7 +116,7 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
     if (urls.count() > 0)
     {
         const QUrl &url = urls.front();
-        LOGD() << url;
+        // LOGD() << url; 
 
         bool shouldBeHandled = false;
         if (url.isLocalFile())
@@ -122,13 +125,61 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
 
             if (getFileExt(filePath.c_str()) == (std::string) "txt")
             {
-                //first, let's report some info about the current score
+                notation::IMasterNotationPtr master = globalContext()->currentMasterNotation();
+                std::vector<Part*> sL = master->masterScore()->parts();
+                auto curScore = sL.front();
+                size_t numStaves = curScore->masterScore()->nstaves();
+                std::vector<Staff*> names = curScore->score()->staves();
+                
+                std::cout << "CURRENT OPEN SCORE: " << std::endl;
+                std::cout << "\tNumber of Staves: " << numStaves  << std::endl;
+                std::cout << "\tStave Names: " << std::endl;
+                for(auto i : names) {std::cout << "\t\t"<<i->part()->shortName().toStdString() << std::endl; }
+                std::cout << "\n" << std::endl;
+
+                //just for fun, lets try to list the pitches of measure 1, staff 1, track 1
+                Score * s = master->masterScore()->score();
+                Part* p = s->parts().front();
+                mu::engraving::InstrumentTrackIdList il = p->instrumentTrackIdList();
+                for(Part* a : s->parts()) {
+                    std::cout << "Part name: '" << a->instrumentId().toStdString() << "' has the following staves: " << std::endl;
+                    for(auto b : a->staves()){
+                        std::cout << "\t" << b->staffName().toStdString() << " (Tracks " << a->startTrack() << " thru " <<  a->endTrack()-1 << ")"<<std::endl;
+                        // std::cout << "\t First Element type: " << a->masterScore()->firstMeasure()->segments().first()->firstElement()->typeName() << std::endl;
+                        std::cout << b->masterScore()->eid().toStdString() << std::endl;
+                    }
+                    
+                    
+                }
+                std::cout << std::endl;
+
+                // std::string a = il[0].instrumentId;
+                // std::cout <<"here is the name of the first instrumental part in open score: " << a << std::endl;
+                // std::cout << "the part>instrument>id is: " << p->instrument()->id().toStdString() << std::endl;
+                // std::cout << "the part '" << a << "' has the following staves " << std::endl;
+                // for(auto b : p->staves()){std::cout << "\t"<< b->staffName().toStdString() << std::endl;}
+                // std::cout << "the part '" << a << "' comprises tracks " << p->startTrack() << " thru " << p->endTrack() << std::endl;
+                
+                // MeasureBase* mb = s->measures()->first();
+                // SegmentList segList = s->firstMeasure()->segments();
+                // EngravingItem ei = segList.first()->firstElementOfSegment(); 
                 
                 
- 
-                // std::cout << "Number of Staves: " << (int)score->nstaves()  << std::endl;
-                // std::cout << "Stave Names: " << std::endl;
-                // for(auto i : score::staves()) {std::cout << i << std::endl;}
+                // Measure * m = s->firstMeasure();
+                // SegmentList sl = m->segments();
+                // mu::engraving::Segment* firstSeg = sl.first();
+                // EngravingItem* fei = firstSeg->firstElementOfSegment(firstSeg, 0);
+                // EngravingItem *firstelem = sl.first()->element(0);
+                // if(firstelem->isChord()){std::cout << "The first element in measure 1 is a chord." <<std::endl;}
+                // std::cout << "Do we find a note in measure 1, staff 1, track 1? : " << fei->nextElement()->isNote() << std::endl;
+                // // fei->nextElement()->elementBase();
+
+                
+                
+
+                
+                
+                
                 
                 try
                 {
@@ -136,7 +187,7 @@ void ApplicationActionController::onDropEvent(QDropEvent *event)
                     params = new Parameters<float>(filePath.c_str());
 
 
-                    std::cout << "Orchestra: " << std::endl;
+                    std::cout << "Configuration File Orchestra: " << std::endl;
                     for(auto i : params->orchestra){
                         std::cout << "\t" << i << std::endl;
                     }

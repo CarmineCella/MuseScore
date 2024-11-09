@@ -40,6 +40,7 @@
 #include "audio/isoundfontrepository.h"
 #include "istartupscenario.h"
 #include "iapplication.h"
+#include "../../notation/internal/igetscore.h"
 
 #include "../../orchidea/internal/dummyFile.h"   //this works
 
@@ -60,6 +61,9 @@
 #include "../engraving/dom/score.h"
 #include "../engraving/compat/scoreaccess.h"
 #include "../engraving/engravingmodule.h"
+#include "../engraving/dom/score.h"
+
+#include "../context/iglobalcontext.h"
 
 
 
@@ -77,6 +81,7 @@ class ApplicationActionController : public QObject, public IApplicationActionCon
     INJECT(audio::ISoundFontRepository, soundFontRepository)
     INJECT(IStartupScenario, startupScenario)
     INJECT(framework::IApplication, application)
+    INJECT(context::IGlobalContext, globalContext)
 
 public:
     void preInit();

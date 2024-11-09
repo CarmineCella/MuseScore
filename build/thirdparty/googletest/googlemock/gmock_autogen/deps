@@ -1,0 +1,12 @@
+gmock_autogen/timestamp: \
+	/Users/jlw_cnmat/Documents/GitHub/wagne342/MuseScore/thirdparty/googletest/googlemock/CMakeLists.txt \
+	/Users/jlw_cnmat/Documents/GitHub/wagne342/MuseScore/thirdparty/googletest/googlemock/cmake/gmock.pc.in \
+	/Users/jlw_cnmat/Documents/GitHub/wagne342/MuseScore/thirdparty/googletest/googlemock/cmake/gmock_main.pc.in \
+	/Users/jlw_cnmat/Documents/GitHub/wagne342/MuseScore/thirdparty/googletest/googlemock/src/gmock-all.cc \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/CheckCSourceCompiles.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/CheckIncludeFile.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/CheckLibraryExists.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/FindPackageHandleStandardArgs.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/FindPackageMessage.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/share/cmake/Modules/FindThreads.cmake \
+	/opt/homebrew/Cellar/cmake/3.29.1/bin/cmake
