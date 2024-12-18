@@ -263,7 +263,7 @@ private:
 
 		for (unsigned i = 0; i < population.size (); ++i) {
 			T v =  evaluate_individual(population[i], target, database);
-			if (v == 0) population[i].fitness = LARGE_VALUE;
+			if (v == 0) population[i].fitness = orchidea::LARGE_VALUE;
 			else population[i].fitness = pow (1. / v, 2.);
 
 			total_fitness += population[i].fitness;

@@ -40,6 +40,32 @@
 #include "audio/isoundfontrepository.h"
 #include "istartupscenario.h"
 #include "iapplication.h"
+#include "../../notation/internal/igetscore.h"
+
+#include "../../orchidea/internal/dummyFile.h"   //this works
+
+// #warning @carmine Including any of the following files leads to a linker error in src/appshell/libappshell.a[6](unity_0_cxx.cxx.o) and src/appshell/libappshell.a[6](unity_1_cxx.cxx.o)
+#include "../../orchidea/internal/SoundTarget.h"
+#include "../../orchidea/internal/Source.h"
+#include "../../orchidea/internal/Parameters.h"
+#include "../../orchidea/internal/GeneticOrchestra.h"
+#include "../../orchidea/internal/Session.h"
+#include "../../orchidea/internal/analysis.h"
+#include "../../orchidea/internal/utilities.h"
+#include "../../orchidea/internal/constants.h"            
+#include "../../orchidea/internal/segmentations.h"
+#include "../../orchidea/internal/OrchestrationModel.h"
+#include "../../orchidea/internal/ConnectionModel.h"
+#include "../../orchidea/internal/connections.h"
+
+#include "../engraving/dom/score.h"
+#include "../engraving/compat/scoreaccess.h"
+#include "../engraving/engravingmodule.h"
+#include "../engraving/dom/score.h"
+
+#include "../context/iglobalcontext.h"
+
+
 
 namespace mu::appshell {
 class ApplicationActionController : public QObject, public IApplicationActionController, public actions::Actionable, public async::Asyncable
@@ -55,6 +81,7 @@ class ApplicationActionController : public QObject, public IApplicationActionCon
     INJECT(audio::ISoundFontRepository, soundFontRepository)
     INJECT(IStartupScenario, startupScenario)
     INJECT(framework::IApplication, application)
+    INJECT(context::IGlobalContext, globalContext)
 
 public:
     void preInit();
@@ -65,6 +92,10 @@ public:
     void onDragEnterEvent(QDragEnterEvent* event) override;
     void onDragMoveEvent(QDragMoveEvent* event) override;
     void onDropEvent(QDropEvent* event) override;
+    Parameters<float>* params;
+    SoundTarget<float, FluxSegmentation>* target;
+    Source<float>* source;
+
 
 private:
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -88,6 +119,10 @@ private:
     bool m_quiting = false;
 
     async::Channel<actions::ActionCodeList> m_actionsReceiveAvailableChanged;
+
+
+    
+
 };
 }
 

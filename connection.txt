@@ -1,0 +1,15 @@
+[ orchestra Fl Fl Ob Ob ClBb ClBb Bn Bn Hn Hn TpC TpC Tbn Tbn BTb Vn Vn Va Va Vc Vc Cb Cb ]
+[ segment 0
+	[ solution 1
+		[ note 6193.97 ClBb ord B3 pp N T12d /Winds/Clarinet_Bb/ordinario/ClBb-ord-B3-pp-N-T12d.wav -2 ]
+		[ note 6193.97 Bn ord C4 mf N N /Winds/Bassoon/ordinario/Bn-ord-C4-mf-N-N.wav 1 ]
+		[ note 6193.97 Bn ord C4 pp N N /Winds/Bassoon/ordinario/Bn-ord-C4-pp-N-N.wav 1 ]
+		[ note 6193.97 Hn ord C4 pp N N /Brass/Horn/ordinario/Hn-ord-C4-pp-N-N.wav 1 ]
+		[ note 6193.97 Hn ord C4 pp N N /Brass/Horn/ordinario/Hn-ord-C4-pp-N-N.wav 1 ]
+		[ note 6193.97 TpC ord F#4 pp N T12u /Brass/Trumpet_C/ordinario/TpC-ord-F#4-pp-N-T12u.wav 19 ]
+		[ note 6193.97 Tbn ord G#3 pp N N /Brass/Trombone/ordinario/Tbn-ord-G#3-pp-N-N.wav -41 ]
+		[ note 6193.97 BTb ord B3 ff N T18d /Brass/Bass_Tuba/ordinario/BTb-ord-B3-ff-N-T18d.wav -2 ]
+		[ note 6193.97 Vn ord C4 pp 4c N /Strings/Violin/ordinario/Vn-ord-C4-pp-4c-N.wav 1 ]
+		[ note 6193.97 Cb ord B3 mf 2c N /Strings/Contrabass/ordinario/Cb-ord-B3-mf-2c-N.wav -2 ]
+	]
+]

@@ -35,7 +35,7 @@ struct SoundTarget : public TargetI<T> {
  		// get segments here
 		std::vector<T> onsets;
 		SegmentationPolicy<T>::get_onsets(buffer, samples, TargetI<T>::source->bsize, 
-			TargetI<T>::source->hopsize, (T) DEFAULT_SR, 
+			TargetI<T>::source->hopsize, (T) orchidea::DEFAULT_SR, 
 			(T) TargetI<T>::parameters->onsets_threshold, 
 			(T) TargetI<T>::parameters->onsets_timegate, onsets);
 
@@ -44,9 +44,9 @@ struct SoundTarget : public TargetI<T> {
 		// save_vector("onsets.txt", onsets);
 		for (unsigned i = 0; i < onsets.size (); ++i) {
 			Segment<T> seg;
-			int start =  (int) (onsets[i] * DEFAULT_SR);
+			int start =  (int) (onsets[i] * orchidea::DEFAULT_SR);
 			int len = (int) (i == onsets.size () - 1 ? samples - start
-				: (int) ((onsets[i + 1] - onsets[i]) * DEFAULT_SR));
+				: (int) ((onsets[i + 1] - onsets[i]) * orchidea::DEFAULT_SR));
             int end = start + len;
             
             if (start > samples || end > samples) {
@@ -67,6 +67,7 @@ struct SoundTarget : public TargetI<T> {
                                       TargetI<T>::parameters->partials_window,
                                       TargetI<T>::parameters->partials_window / 4,
                                       TargetI<T>::parameters->partials_filtering);
+				
                 for (unsigned i = 0; i < TargetI<T>::parameters->extra_pitches.size (); ++i) {
                     seg.notes[TargetI<T>::parameters->extra_pitches[i]] = 0;
                 }
@@ -85,7 +86,7 @@ struct SoundTarget : public TargetI<T> {
 		int channels = in.getNumChannels ();
 		int bits = in.getNumBits();
 
-		if (sr != DEFAULT_SR) {
+		if (sr != orchidea::DEFAULT_SR) {
 			throw std::runtime_error ("invalid sampling rate");
 		}
 		if (channels > 2) {

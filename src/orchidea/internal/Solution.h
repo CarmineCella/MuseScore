@@ -54,7 +54,7 @@ struct Solution {
 			summary << "\t\t[ note ";
 			DB_entry<T>* d = database[indices[j]];
 
-			summary << ((T) durations[j] / DEFAULT_SR) * 1000. << " ";
+			summary << ((T) durations[j] / orchidea::DEFAULT_SR) * 1000. << " ";
 			for (unsigned z = 0; z < d->symbols.size (); ++z) {
 				summary << d->symbols[z] << " ";	
 			}
@@ -109,7 +109,7 @@ struct Solution {
 			DB_entry<float>* d = database[indices[j]];
 			std::stringstream tmp;
 
-			tmp << ((T) durations[j] / DEFAULT_SR) * 1000.;
+			tmp << ((T) durations[j] / orchidea::DEFAULT_SR) * 1000.;
 			result.push_back(tmp.str());
 
 			for (unsigned z = 0; z < d->symbols.size (); ++z) {
@@ -180,7 +180,7 @@ struct Solution {
         
         DB_entry<T>* d = database[indices[j]];
         
-        data->duration = ((T) durations[j] / DEFAULT_SR) * 1000.;
+        data->duration = ((T) durations[j] / orchidea::DEFAULT_SR) * 1000.;
         snprintf(data->instrument, 64, "%s", d->symbols[0].c_str());
         snprintf(data->playingstyle, 64, "%s", d->symbols[1].c_str());
         snprintf(data->pitch, 8, "%s", d->symbols[2].c_str());

@@ -51,7 +51,7 @@ void extract_symbols (DB_entry<T>& e) {
 
 		e.symbols.push_back (syms[0]);
 		std::stringstream tmp;
-		for (unsigned i = 1; i < pos; ++i) {
+		for (int i = 1; i < pos; ++i) {
 			tmp << syms[i];
 			if (i != pos -1) tmp << "-";
 		}
@@ -66,7 +66,7 @@ void extract_symbols (DB_entry<T>& e) {
 		}
 	}
 }
-void insert_symbol (std::map<std::string, std::vector<int> >& coll,
+static void insert_symbol (std::map<std::string, std::vector<int> >& coll,
 	const std::string& key, int index) {
 	std::map<std::string, std::vector<int> >::iterator it = coll.find (key);
 	if (it == coll.end ()) {
@@ -80,10 +80,12 @@ void insert_symbol (std::map<std::string, std::vector<int> >& coll,
 
 template <typename T>
 struct Source {
+
 	Source (Parameters<T>* params) {
 		parameters = params;
 		load ();
 	}
+
 	void item_to_vector (std::map<std::string, std::vector<int> > item,
 		std::vector<std::string>& results) {
 		for (std::map<std::string, std::vector<int> >::iterator it = item.begin ();

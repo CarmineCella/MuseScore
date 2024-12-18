@@ -55,6 +55,7 @@ static void flux_worker (const T* buffer, int samples,
 
 	T* win = new T[bsize];
 	makeWindow<T>(win, bsize, .5, .5, 0.); // hanning
+	std::cout << bsize << std::endl;
 	AbstractFFT<T>* fft = createFFT<T>(bsize);
 
 	std::vector<T> flux;
@@ -112,6 +113,7 @@ struct FluxSegmentation {
 		int bsize, int hop, T sr, T threshold, T timegate, std::vector<T>& onsets) {
 			flux_worker (buffer, samples, bsize, hop, sr, threshold, timegate, onsets, specflux);
 		}
+	
 };
 
 template <typename T>

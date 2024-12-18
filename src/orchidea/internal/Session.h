@@ -49,6 +49,7 @@ struct Session : public SessionI<T> {
 		}
 	}
 
+	
 };
 
 #endif	// SESSION_H
